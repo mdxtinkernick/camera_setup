@@ -14,17 +14,19 @@ uint32_t const cameraColor = 0x0000FF;
 uint32_t const selectedColor = 0x00FF00;
 uint32_t const turnOffColor = 0xFF0000;
 uint32_t const turnOnColor = 0x4B0082;
+uint32_t const switchColor = 0x555500;
 
 
 
 int selectedPositionKey = -1;
 int selectedCameraKey = -1;
+int selectedSwitchKey = -1;
 
 uint32_t button_colors[32] = {
   positionColor, 0x000000, 0x000000, 0x000000, 0x000000, positionColor, 0x000000, turnOnColor,
   0x000000, cameraColor, cameraColor, cameraColor, cameraColor, 0x000000, 0x000000, 0x000000,
   positionColor, 0x000000, 0x000000, 0x000000, 0x000000, positionColor, 0x000000, 0x000000,
-  0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, turnOffColor
+  0x000000, switchColor, switchColor, switchColor, switchColor, 0x000000, 0x000000, turnOffColor
 };
 
 
@@ -60,6 +62,14 @@ void loop() {
 
     if (e.bit.EVENT == KEY_JUST_PRESSED) {
       Serial.println(" pressed\n");
+      if (button_colors[key] == switchColor) {
+        trellis.noteOn(FIRST_MIDI_NOTE + key, 64);
+        if (selectedSwitchKey > -1) {
+          trellis.setPixelColor(selectedSwitchKey, switchColor);
+        }
+        trellis.setPixelColor(key, selectedColor);
+        selectedSwitchKey = key;
+      }
       if (button_colors[key] == positionColor) {
         trellis.noteOn(FIRST_MIDI_NOTE + key, 64);
         if (selectedPositionKey > -1) {
